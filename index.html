@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RGB — Renk Tahmin Oyunu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Animated background blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <main class="game-wrapper">
+        <!-- ===== HEADER ===== -->
+        <header class="game-header">
+            <h1 class="logo">
+                <span class="logo-r">R</span><span class="logo-g">G</span><span class="logo-b">B</span>
+            </h1>
+        </header>
+
+
+
+
+        <!-- ===== MODE SELECTOR ===== -->
+        <div class="mode-tabs glass-card">
+            <button class="mode-tab active" data-mode="easy">🟢 Kolay</button>
+            <button class="mode-tab" data-mode="medium">🟡 Orta</button>
+            <button class="mode-tab" data-mode="hard">🟠 Zor</button>
+            <button class="mode-tab" data-mode="expert">🔴 Uzman</button>
+        </div>
+
+        <!-- ===== GAME AREA ===== -->
+        <div class="game-area glass-card">
+            <!-- Timer -->
+            <div class="timer-container" id="timerContainer">
+                <svg class="timer-svg" viewBox="0 0 100 100">
+                    <circle class="timer-track" cx="50" cy="50" r="45" />
+                    <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45" />
+                </svg>
+                <span class="timer-text" id="timerText">15</span>
+            </div>
+
+            <!-- Color Box -->
+            <div class="color-display">
+                <div class="color-box" id="colorBox">
+                    <span class="color-box-label" id="colorBoxLabel">?</span>
+                </div>
+            </div>
+
+            <!-- ===== EASY MODE: 6 option buttons ===== -->
+            <div class="mode-panel" id="easyPanel">
+                <p class="mode-instruction">Bu rengin RGB kodunu seç!</p>
+                <div class="options-grid">
+                    <button class="option-btn" data-index="0"></button>
+                    <button class="option-btn" data-index="1"></button>
+                    <button class="option-btn" data-index="2"></button>
+                    <button class="option-btn" data-index="3"></button>
+                    <button class="option-btn" data-index="4"></button>
+                    <button class="option-btn" data-index="5"></button>
+                </div>
+            </div>
+
+            <!-- ===== MEDIUM MODE: RGB sliders ===== -->
+            <div class="mode-panel hidden" id="mediumPanel">
+                <p class="mode-instruction">Slider'larla rengi eşleştir! (±15 tolerans)</p>
+                <div class="sliders-container">
+                    <div class="slider-row">
+                        <label class="slider-label label-r">R</label>
+                        <input type="range" class="slider slider-r" id="sliderR" min="0" max="255" value="128" />
+                        <span class="slider-value" id="sliderRVal">128</span>
+                    </div>
+                    <div class="slider-row">
+                        <label class="slider-label label-g">G</label>
+                        <input type="range" class="slider slider-g" id="sliderG" min="0" max="255" value="128" />
+                        <span class="slider-value" id="sliderGVal">128</span>
+                    </div>
+                    <div class="slider-row">
+                        <label class="slider-label label-b">B</label>
+                        <input type="range" class="slider slider-b" id="sliderB" min="0" max="255" value="128" />
+                        <span class="slider-value" id="sliderBVal">128</span>
+                    </div>
+                </div>
+                <div class="preview-row">
+                    <div class="preview-box" id="mediumPreview"></div>
+                    <span class="preview-label">Senin Tahminin</span>
+                </div>
+                <button class="action-btn" id="mediumCheckBtn">Tahmin Et!</button>
+            </div>
+
+            <!-- ===== HARD MODE: Manual RGB input with hints ===== -->
+            <div class="mode-panel hidden" id="hardPanel">
+                <p class="mode-instruction">RGB değerlerini yaz, ipuçlarını takip et!</p>
+                <div class="hard-inputs">
+                    <div class="hard-input-group">
+                        <label class="hard-label label-r">R</label>
+                        <input type="number" class="hard-input" id="hardR" min="0" max="255" value="0" />
+                        <span class="hint-arrow" id="hintR"></span>
+                    </div>
+                    <div class="hard-input-group">
+                        <label class="hard-label label-g">G</label>
+                        <input type="number" class="hard-input" id="hardG" min="0" max="255" value="0" />
+                        <span class="hint-arrow" id="hintG"></span>
+                    </div>
+                    <div class="hard-input-group">
+                        <label class="hard-label label-b">B</label>
+                        <input type="number" class="hard-input" id="hardB" min="0" max="255" value="0" />
+                        <span class="hint-arrow" id="hintB"></span>
+                    </div>
+                </div>
+                <div class="preview-row">
+                    <div class="preview-box" id="hardPreview"></div>
+                    <span class="preview-label">Senin Tahminin</span>
+                </div>
+                <div class="attempts-display">
+                    Deneme: <span id="attempts">0</span>
+                </div>
+                <button class="action-btn" id="hardCheckBtn">Tahmin Et!</button>
+            </div>
+
+            <!-- ===== EXPERT MODE: HEX input, no hints ===== -->
+            <div class="mode-panel hidden" id="expertPanel">
+                <p class="mode-instruction">HEX kodunu yaz — ipucu yok, tek şans!</p>
+                <div class="hex-input-container">
+                    <span class="hex-hash">#</span>
+                    <input type="text" class="hex-input" id="hexInput" maxlength="6" placeholder="FF5733" />
+                </div>
+                <div class="preview-row">
+                    <div class="preview-box" id="expertPreview"></div>
+                    <span class="preview-label">Senin Tahminin</span>
+                </div>
+                <button class="action-btn" id="expertCheckBtn">Tahmin Et!</button>
+            </div>
+
+            <!-- ===== RESULT MESSAGE ===== -->
+            <div class="result-message hidden" id="resultMessage">
+                <span class="result-icon" id="resultIcon"></span>
+                <span class="result-text" id="resultText"></span>
+                <span class="result-detail" id="resultDetail"></span>
+            </div>
+        </div>
+
+        <!-- ===== NEW GAME BUTTON ===== -->
+        <button class="new-game-btn glass-card" id="newGameBtn">
+            <span class="btn-icon">🔄</span> Yeni Tur
+        </button>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
